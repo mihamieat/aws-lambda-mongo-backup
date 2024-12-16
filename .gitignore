@@ -56,3 +56,8 @@ Pipfile.lock
 # Secrets
 .env.*
 .env
+
+# terraform
+.terraform/
+.terraform.lock*
+terraform*
