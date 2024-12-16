@@ -39,11 +39,12 @@ resource "aws_iam_role" "lambda_role" {
 }
 EOF
 }
+
 resource "aws_iam_policy" "iam_policy_for_lambda" {
 
   name        = "aws_iam_policy_for_terraform_aws_lambda_role"
   path        = "/"
-  description = "AWS IAM Policy for managing aws lambda role"
+  description = "AWS IAM Policy for managing AWS Lambda role"
   policy      = <<EOF
 {
  "Version": "2012-10-17",
@@ -56,21 +57,22 @@ resource "aws_iam_policy" "iam_policy_for_lambda" {
      ],
      "Resource": "arn:aws:logs:*:*:*",
      "Effect": "Allow"
+   },
+   {
+     "Action": [
+       "s3:PutObject"
+     ],
+     "Resource": "arn:aws:s3:::mn-mongo-backup/*",
+     "Effect": "Allow"
    }
  ]
 }
 EOF
 }
 
-resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
+resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_lambda_role" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.iam_policy_for_lambda.arn
-}
-
-data "archive_file" "zip_the_python_code" {
-  type        = "zip"
-  source_dir  = "${path.module}/package/python"
-  output_path = "${path.module}/db-backup.zip"
 }
 
 resource "aws_lambda_function" "terraform_lambda_func" {
