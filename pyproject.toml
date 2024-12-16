@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "lambda-db-backup"
+version = "0.1.0"
+description = "AWS Lambda functions for MongoDB database backups"
+authors = ["Mihamina Rakotovazaha <r.miham@yahoo.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "lambda_db_backup"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pymongo = "^4.10.1"
+boto3 = "^1.35.81"
+pytest = "^8.3.4"
+mongomock = "^4.3.0"
+moto = "^5.0.23"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

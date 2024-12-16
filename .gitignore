@@ -1,0 +1,58 @@
+# Byte-compiled files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.log
+
+# Virtual environment (if created manually)
+venv/
+.env/
+
+# Poetry-specific files
+.poetry/
+poetry.lock
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.orig
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Test artifacts and coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Pipenv-specific files (in case someone switches tools)
+Pipfile
+Pipfile.lock
+
+# Miscellaneous
+*.bak
+*.tmp
+*.old
+
+# Secrets
+.env.*
+.env
