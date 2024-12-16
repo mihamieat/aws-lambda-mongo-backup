@@ -61,3 +61,10 @@ Pipfile.lock
 .terraform/
 .terraform.lock*
 terraform*
+db-backup.zip
+
+# generated package
+package/
+
+# requirements file
+requirements.txt
