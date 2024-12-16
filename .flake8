@@ -1,0 +1,10 @@
+[flake8]
+# Ignore specific files or directories
+exclude = 
+    .git,
+    __pycache__,
+    tests/*,
+    package/*
+
+# Additional configurations
+max-line-length = 120

@@ -1,0 +1,14 @@
+stages:
+  - lint
+
+before_script:
+  - pip install poetry
+  - poetry install
+
+flake8:
+  stage: lint
+  script:
+    - poetry run flake8 .
+  only:
+    - merge_requests
+    - master
