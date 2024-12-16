@@ -8,7 +8,7 @@ import boto3
 
 def lambda_handler(event, context):
     # MongoDB connection details
-    MONGO_URI = os.getenv("CONNECTION_STRING", "mongodb+srv://username:password@cluster.mongodb.net")
+    MONGO_URI = os.getenv("CONNECTION_STRING")
     BACKUP_DATABASES = None  # Specify databases to back up or leave as None for all
     S3_BUCKET = os.getenv("S3_BUCKET", "your-s3-bucket-name")
     S3_REGION = os.getenv("S3_REGION", "your-s3-region")
@@ -17,19 +17,22 @@ def lambda_handler(event, context):
     temp_dir = "/tmp/mongo_backup"
 
     try:
-        backup_filename, backup_filepath = mongo_backup(temp_dir, MONGO_URI, BACKUP_DATABASES)
+        backup_filename, backup_filepath = mongo_backup(
+            temp_dir, MONGO_URI, BACKUP_DATABASES
+        )
 
         s3_upload(S3_REGION, backup_filepath, S3_BUCKET, backup_filename)
 
         return {
-            'statusCode': 200,
-            'body': f"Backup completed and uploaded to S3 as backups/{backup_filename}"
+            "statusCode": 200,
+            "body": f"Backup completed /{backup_filename}",
         }
 
     finally:
         # Clean up temporary directory
         if os.path.exists(temp_dir):
             shutil.rmtree(temp_dir)
+
 
 def mongo_backup(temp_dir, mongo_uri, backup_database):
     """Generate backup file and return file name and file path."""
@@ -51,17 +54,18 @@ def mongo_backup(temp_dir, mongo_uri, backup_database):
         db = client[db_name]
         for collection_name in db.list_collection_names():
             collection_backup_path = os.path.join(backup_dir, f"{collection_name}.json")
-            with open(collection_backup_path, 'w') as f:
+            with open(collection_backup_path, "w") as f:
                 for doc in db[collection_name].find():
-                    f.write(str(doc) + '\n')
+                    f.write(str(doc) + "\n")
 
     # Create a tarball of the backup
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     backup_filename = f"mongodb_backup_{timestamp}.tar.gz"
     backup_filepath = os.path.join(temp_dir, backup_filename)
     with tarfile.open(backup_filepath, "w:gz") as tar:
         tar.add(temp_dir, arcname=os.path.basename(temp_dir))
     return backup_filename, backup_filepath
+
 
 def s3_upload(region, backup_filepath, bucket_name, backup_filename):
     """Upload file to S3."""
