@@ -9,7 +9,7 @@ AWS Lambda functions for MongoDB database backups
 | S3_REGION         | S3 bucket Region               |
 ## To deploy new version
 ```sh
-mkdir -p pachage/python
+mkdir -p package/python
 cp src/lambda_function.py package
 poetry run pip freeze > requirements.txt
 poetry run pip install -r requirements.txt --target=package/python
