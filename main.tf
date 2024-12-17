@@ -80,6 +80,22 @@ data "archive_file" "zip_the_python_code" {
   output_path = "${path.module}/db-backup.zip"
 }
 
+variable "s3_region" {
+  description = "AWS Region for S3 bucket"
+  type        = string
+}
+
+variable "s3_bucket" {
+  description = "S3 Bucket Name"
+  type        = string
+}
+
+variable "connection_string" {
+  description = "MongoDB Connection String"
+  type        = string
+  sensitive   = true
+}
+
 resource "aws_lambda_function" "terraform_lambda_func" {
   filename      = "${path.module}/db-backup.zip"
   function_name = "db_backup"
@@ -89,10 +105,13 @@ resource "aws_lambda_function" "terraform_lambda_func" {
   depends_on    = [aws_iam_role_policy_attachment.attach_iam_policy_to_lambda_role]
   environment {
     variables = {
-      S3_REGION         = "eu-west-3"
-      S3_BUCKET         = "mn-mongo-backup"
-      CONNECTION_STRING = "mongodb+srv://autom_arch:wP8RgsebYtGnYXC3@mn0.4x7e4.mongodb.net/"
+      S3_REGION         = var.s3_region
+      S3_BUCKET         = var.s3_bucket
+      CONNECTION_STRING = var.connection_string
     }
   }
   timeout = 30
+
+  # Only apply changes if the zip file has been modified
+  source_code_hash = filebase64sha256("${path.module}/db-backup.zip")
 }
