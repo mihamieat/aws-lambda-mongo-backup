@@ -74,6 +74,26 @@ resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_lambda_role" {
   policy_arn = aws_iam_policy.iam_policy_for_lambda.arn
 }
 
+resource "aws_cloudwatch_event_rule" "daily_trigger" {
+  name        = "daily_trigger"
+  description = "Trigger Lambda function once every day"
+  schedule_expression = "cron(0 0 * * ? *)"  # This triggers at midnight UTC every day
+}
+
+resource "aws_cloudwatch_event_target" "lambda_target" {
+  rule      = aws_cloudwatch_event_rule.daily_trigger.name
+  target_id = "lambda_target"
+  arn       = aws_lambda_function.terraform_lambda_func.arn
+}
+
+resource "aws_lambda_permission" "allow_eventbridge" {
+  statement_id  = "AllowEventBridgeInvoke"
+  action        = "lambda:InvokeFunction"
+  principal     = "events.amazonaws.com"
+  function_name = aws_lambda_function.terraform_lambda_func.function_name
+  source_arn    = aws_cloudwatch_event_rule.daily_trigger.arn
+}
+
 data "archive_file" "zip_the_python_code" {
   type        = "zip"
   source_dir  = "${path.module}/package/python"
